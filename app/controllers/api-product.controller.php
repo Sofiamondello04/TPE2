@@ -7,17 +7,20 @@ require_once './app/views/api-view.php';
 class ApiProductController {
     private $modelProducts; 
     private $view;
-    private $body;
+    private $data;
   
     public function __construct() {
         $this->modelProducts = new ProductModel();
-        $this->modelBrands = new BrandModel();
         $this->view = new ApiView();
-        $this->brands = $this->modelBrands->getAllBrands(); // ver si lo necesito
+        $this->data = file_get_contents("php://input");
     
     }
 
-    public function getProducts($params = null) { 
+    private function getData() {
+        return json_decode($this->data);
+    }
+
+    function getProducts($params = null) { 
         $productos = $this->modelProducts->getAllProducts();
         $this->view->response($productos);
     }
@@ -40,19 +43,19 @@ class ApiProductController {
 
     function addProduct($params = null) { //cambiarla por add comentario
          //Se obtiene el JSON con los datos a insertar.
-         $body = $this->getBody();
+         $producto = $this->getData();
 
           //Verifica que el JSON ingresado no contenga campos vacíos. 
-        if (empty($body->nombre) || empty($body->precio) || empty($body->talle) || empty($body->id_marca)) {
+        if (empty($producto->nombre) || empty($producto->precio) || empty($producto->talle) || empty($producto->id_marca)) {
             $this->view->response("Complete todos los datos", 400);
             
         }
         else {
             //Inserta el JSON en la base de datos y almacena en $id el Id del producto insertado.
-            $id = $this->modelProducts->insertProduct($body);
+            $id = $this->modelProducts->insertProduct($producto->nombre, $producto->precio, $producto->talle, $producto->id_marca);
             //Obtiene nuevamente el producto que acaba de insertar, para mostrarlo en la vista.
             $producto = $this->modelProducts->getProduct($id);
-            $this->view->response($task, 201);
+            $this->view->response($producto, 201);
         }        
     }
 
@@ -61,7 +64,7 @@ class ApiProductController {
         $product = $this->modelProducts->getProduct($id);
 
         if ($product) {
-            $this->modelProducts->deleteProduct($id);
+            $this->modelProducts->deleteProductById($id);
             $this->view->response("El producto con el id=$id fue borrado con exito", 200);
         }
         else {
@@ -69,10 +72,7 @@ class ApiProductController {
         }
     }
 
-    private function getBody() {
-        $this->body = file_get_contents("php://input"); // lee el body del request
-        return json_decode($this->data);
-    }
+    
 
  
 }
