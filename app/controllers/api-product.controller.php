@@ -52,7 +52,8 @@ class ApiProductController {
                 $order = 'producto.'.$orderBy;
             }
             // Verifica si los parámetros de paginado son válidos
-            if((is_numeric($page) && $page>0) && (is_numeric($limit) && $limit>0)){
+            if((is_numeric($page) && $page>0) &&  (is_numeric($limit) && $limit>0)){
+               
 
                 //Calcula cuál es el primer elemento a mostrar del paginado y lo almacena en $startAt
                 $startAt = ($page*$limit)-$limit;
@@ -68,7 +69,7 @@ class ApiProductController {
                             $filter = 'marca.nombre_marca';
                         }
                         else {
-                            $filter = 'producto'.$filterBy;
+                            $filter = $filterBy;
                         }
                         
                         //Obtiene todos los productos del modelo y pasa los parametros de ordenamiento, paginado y filtrado.
