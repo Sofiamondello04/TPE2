@@ -8,8 +8,6 @@ class ProductModel {
     }
 
     public function getAllProducts($order, $orderMode, $limit, $startAt) {
-
-        // modifique el INNER JOIN
         $query = $this->db->prepare("SELECT producto.*, marca.nombre_marca FROM producto 
         INNER JOIN marca ON producto.id_marca = marca.id_m
         ORDER BY $order $orderMode
@@ -31,6 +29,14 @@ class ProductModel {
         return $productos;
     }
 
+    function getProduct($id) {
+        $query= $this->db->prepare("SELECT producto.*, marca.nombre_marca FROM producto
+        INNER JOIN marca ON producto.id_marca = marca.id_m WHERE id= ?");
+        $query-> execute([$id]);
+        $product= $query->fetch(PDO::FETCH_OBJ);
+        return $product;
+    }
+
     public function getColumns(){
         $query = $this->db->prepare('DESCRIBE producto');
         $query->execute();
@@ -43,26 +49,6 @@ class ProductModel {
         $query->execute([$nombre, $precio, $talle, $id_marca]);
 
         return $this->db->lastInsertId();
-    }
-
-    function getProduct($id) {
-        $query= $this->db->prepare("SELECT producto.*, marca.nombre_marca FROM producto
-        INNER JOIN marca ON producto.id_marca = marca.id_m WHERE id= ?");
-        $query-> execute([$id]);
-        $product= $query->fetch(PDO::FETCH_OBJ);
-        return $product;
-    }
-
-    function getProductsOfBrand($id_marca) {
-        $query= $this->db->prepare("SELECT * FROM producto INNER JOIN marca ON producto.id_marca = marca.id_m WHERE id_marca= ?");
-        $query-> execute([$id_marca]);
-        $products= $query->fetchAll(PDO::FETCH_OBJ);
-        return $products;
-    }
-
-    public function updateP($productoE) { 
-        $query = $this->db->prepare('UPDATE producto SET nombre= ?, talle= ?, precio= ?,  id_marca= ? WHERE id = ?');  
-        $query->execute([$productoE->nombreE, $productoE->talleE, $productoE->precioE,  $productoE->id_marcaE, $productoE->id]);      
     }
 
 }

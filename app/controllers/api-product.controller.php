@@ -19,9 +19,6 @@ class ApiProductController {
     }
 
     function getProducts($params = null) { 
-        
-        //Obtengo todos los productos con los parametros de ordenado, paginado y filtrado.
-
         $orderBy = $_GET['orderBy'] ?? "nombre";
         $orderMode = $_GET['orderMode'] ?? "asc";
   
@@ -30,9 +27,8 @@ class ApiProductController {
 
         $filterBy = $_GET['filterBy'] ?? null;
         $equalTo = $_GET['equalTo'] ?? null;
-
-        //Obtiene los nombres de los campos de la tabla producto y los guarda en el arreglo $columns.
-        $columns = $this->getHeaderColumns();
+        
+        $columns = $this->getHeaderColumns();//Nombres de los campos de la tabla producto y los guardo en el arreglo $columns.
 
         // Verifica si los parámetros de ordenado son válidos
         // in_array comprueba si el valor existe en el arreglo
