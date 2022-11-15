@@ -20,7 +20,7 @@ class ProductModel {
         return $productos;
     }
 
-    public function getAllWithFilter($order, $orderMode, $limit, $startAt, $filterBy, $equalTo){
+    public function getAllWithParameters($order, $orderMode, $limit, $startAt, $filterBy, $equalTo){
         $query = $this->db->prepare("SELECT producto.*, marca.nombre_marca FROM producto
         INNER JOIN marca ON producto.id_marca = marca.id_m
         WHERE $filterBy = ?
@@ -45,13 +45,9 @@ class ProductModel {
         return $this->db->lastInsertId();
     }
 
-    function deleteProductById($id) {
-        $query = $this->db->prepare('DELETE FROM producto WHERE id = ?');
-        $query->execute([$id]);
-    }
-
     function getProduct($id) {
-        $query= $this->db->prepare("SELECT * FROM producto INNER JOIN marca ON producto.id_marca = marca.id_m WHERE id= ?");
+        $query= $this->db->prepare("SELECT producto.*, marca.nombre_marca FROM producto
+        INNER JOIN marca ON producto.id_marca = marca.id_m WHERE id= ?");
         $query-> execute([$id]);
         $product= $query->fetch(PDO::FETCH_OBJ);
         return $product;
